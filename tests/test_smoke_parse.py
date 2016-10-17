@@ -38,11 +38,11 @@ def test_build(cli):
   cmd = 'build --path %s' % app_dir
   parser.run(cmd.split())
 
-
+'''
 def test_log(cli):
   cmd = 'log --path %s' % app_dir
   parser.run(cmd.split())
-
+'''
 
 def test_test(cli):
   cmd = 'test --path %s' % app_dir

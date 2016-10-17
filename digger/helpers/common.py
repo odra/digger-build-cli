@@ -6,6 +6,30 @@ import io
 import os
 from contextlib import redirect_stdout
 import copy
+import pty
+
+
+class Out(object):
+  def __init__(self, stdout=sys.stdout, fno=-1):
+    self.fno = fno
+    self.stdout = stdout
+    self.lines = []
+    self.lines.append('oi')
+
+  def fileno(self):
+    return self.fno
+
+  def write(self, string):
+    self.lines.append('write')
+    print('lalalal')
+    self.stdout.write(string)
+
+  def readlines(self):
+    return self.lines
+
+  def read(self):
+    return '\n'.join(self.lines)
+
 
 def run_cmd(cmd, log='log.log', cwd='.', stdout=sys.stdout, bufsize=1, encode='utf-8'):
   """
@@ -20,17 +44,26 @@ def run_cmd(cmd, log='log.log', cwd='.', stdout=sys.stdout, bufsize=1, encode='u
   Returns:
     The process object
   """
+  '''
   logfile = '%s/%s' % (cwd, log)
   
   if os.path.exists(logfile):
     os.remove(logfile)
+  '''
+
+  out = Out()
+
   proc_args = {
-    'stdout': subprocess.PIPE,
+    'stdout': out,
     'stderr': subprocess.PIPE,
     'cwd': cwd,
     'universal_newlines': True
   }
 
+  with subprocess.Popen(cmd, **proc_args) as proc:
+    print(out.readlines())
+
+  '''
   proc = subprocess.Popen(cmd, **proc_args)
   
   while True:
@@ -39,13 +72,15 @@ def run_cmd(cmd, log='log.log', cwd='.', stdout=sys.stdout, bufsize=1, encode='u
       stdout.write(line)
     else:
       break
+  '''
+  '''
   out, err = proc.communicate()
-
   with open(logfile, 'w') as f:
     if out:
       f.write(out)
     else:
       f.write(err)
+  '''
 
 
 def find(root_dir, pattern='*'):
