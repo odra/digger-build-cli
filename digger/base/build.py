@@ -113,7 +113,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
         output.append('|{}{}/'.format(indent, os.path.basename(root)))
       subindent = ident_char * tab_width * (level + 1)
       [output.append('|{}{}'.format(subindent, f)) for f in files]
-    return '\n'.join(output)
+    self.run_cmd(['echo', '\n'.join(output)])
 
   def run_cmd(self, cwd=None, **kwargs):
     if cwd is None:
@@ -121,7 +121,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
     common.run_cmd(cmd, cwd=cwd, **kwargs)
 
   @abc.abstractmethod
-  def test(self):
+  def test(self, debug=True):
     """
     Runs the app unit tests.
 
@@ -130,7 +130,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
     raise errors.MethodNotImplementedError(message='test method not implemented')
 
   @abc.abstractmethod
-  def validate(self):
+  def validate(self, debug=True):
     """
     Validates the app project before the build.
 
@@ -141,7 +141,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
     raise errors.MethodNotImplementedError(message='validate method not implemented')    
 
   @abc.abstractmethod
-  def prepare(self):
+  def prepare(self, debug=True):
     """
     Prepares the app project to the build process, executes after the validate step is executed.
 
@@ -152,7 +152,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
     raise errors.MethodNotImplementedError(message='prepare method not implemented')
 
   @abc.abstractmethod
-  def build(self):
+  def build(self, debug=True):
     """
     Builds the app project after the execution of validate and prepare.
 

@@ -1,4 +1,4 @@
-from digger import builds
+from digger import builds, config
 from .base.action import BaseAction, Argument
 
 __ALL__ = ['BuildAction', 'ExportAction', 'InspectAction']
@@ -12,7 +12,7 @@ class BuildAction(BaseAction):
   _cmd_ = 'build'
   _help_ = 'build your android app'
 
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
+  path = Argument('--path', '-p', default=config.app_folder, action='store', help='app source path')
   mode = Argument('--mode', '-m', default='debug', action='store', help='build mode: debug(default) or release')
   debug = Argument('--debug', '-d', default=True, action='store', help='debug/verbose mode, prints full output to stdout')
 
@@ -33,6 +33,7 @@ class BuildAction(BaseAction):
     project.prepare(debug=debug)
     project.validate(debug=debug)
     project.build(mode=mode, debug=debug)
+    project.get_export_path()
 
 
 class ExportAction(BaseAction):
@@ -42,9 +43,9 @@ class ExportAction(BaseAction):
   _cmd_ = 'export'
   _help_ = 'export apk file(s)'
 
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
+  path = Argument('--path', '-p', default=config.app_folder, action='store', help='app source path')
 
-  def handler(self, path='/app'):
+  def handler(self, path=config.app_folder):
     """
     Handler that prints the apk file(s) path that can be exported from the container (using the ``project`` package).
 
@@ -67,9 +68,9 @@ class InspectAction(BaseAction):
   _cmd_ = 'inspect'
   _help_ = 'inspect your app files'
 
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
+  path = Argument('--path', '-p', default=config.app_folder, action='store', help='app source path')
 
-  def handler(self, path='/app'):
+  def handler(self, path=config.app_folder):
     """
     Handler that prints the project file structure in the STDOUT (using the ``project`` package).
 
@@ -92,9 +93,9 @@ class TestAction(BaseAction):
   _cmd_ = 'test'
   _help_ = 'run the test task'
 
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
+  path = Argument('--path', '-p', default=config.app_folder, action='store', help='app source path')
 
-  def handler(self, path='/app'):
+  def handler(self, path=config.app_folder):
     """
     Handler that prints the project file structure in the STDOUT (using the ``project`` package).
 
@@ -114,7 +115,7 @@ class SignAction(BaseAction):
   _cmd_ = 'sign'
   _help_ = 'sign app binary'
 
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
+  path = Argument('--path', '-p', default=config.app_folder, action='store', help='app source path')
   storepass = Argument('--storepass', '-sp', default='android', action='store', help='android storepass')
   keypass = Argument('--keypass', '-kp', default='android', action='store', help='android keypass')
   keystore = Argument('--keystore', '-ls', default=None, action='store', help='android keystore filename')
@@ -122,7 +123,7 @@ class SignAction(BaseAction):
   binary = Argument('--binary', '-b', default=None, action='store', help='binary path to sign')
   name = Argument('--name', '-n', default='app', action='store', help='output filename')
 
-  def handler(self, path='/app', storepass='android', keypass='android', keystore='android', alias='debug', binary=None, name='app'):
+  def handler(self, path=config.app_folder, storepass='android', keypass='android', keystore='android', alias='debug', binary=None, name='app'):
     options = {
       'storepass': storepass,
       'keypass': keypass,

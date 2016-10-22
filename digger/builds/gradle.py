@@ -82,7 +82,7 @@ class GradleBuild(BaseBuild):
     android_helper.jarsign(storepass, keypass, keystore, apk, alias, path=self.path)
     android_helper.zipalign(apk, dist, build_tool=self.get_build_tool_version(), path=self.path)
 
-  def validate(self):
+  def validate(self, debug=True):
     """
     Validates the app project before the build.
 
@@ -93,7 +93,7 @@ class GradleBuild(BaseBuild):
     if os.path.exists('%s/gradlew' % self.path) is False:
       raise errors.InvalidProjectStructure(message='Missing gradlew project root folder')
 
-  def prepare(self):
+  def prepare(self, debug=True):
     """
     Prepares the android project to the build process.
 
@@ -103,7 +103,7 @@ class GradleBuild(BaseBuild):
     st = os.stat('%s/gradlew' % self.path)
     os.chmod('%s/gradlew' % self.path, st.st_mode | stat.S_IEXEC)
 
-  def build(self, mode='debug'):
+  def build(self, mode='debug', debug=True):
     """
     Builds the app project after the execution of validate and prepare.
 
@@ -122,7 +122,7 @@ class GradleBuild(BaseBuild):
     ]
     if self.cache_folder is not None:
       cmd.extend(['--gradle-user-home', self.cache_folder])
-    self.run_cmd(cmd)
+    self.run_cmd(cmd, debug=debug)
 
   def test(self):
     """

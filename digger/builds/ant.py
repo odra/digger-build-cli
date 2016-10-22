@@ -43,7 +43,7 @@ class AntBuild(BaseBuild):
     android_helper.jarsign(storepass, keypass, keystore, apk, alias, path=self.path)
     android_helper.zipalign(apk, dist, build_tool=build_tool, path=self.path)
 
-  def prepare(self):
+  def prepare(self, debug=True):
     """
     Prepares the android project to the build process.
 
@@ -54,9 +54,9 @@ class AntBuild(BaseBuild):
       '-p', self.path,
       '-t', self.get_target()
     ]
-    self.run_cmd(cmd)
+    self.run_cmd(cmd, debug=debug)
 
-  def validate(self):
+  def validate(self, debug=debug):
     """
     Validates the app project before the build.
 
@@ -66,7 +66,7 @@ class AntBuild(BaseBuild):
     """
     self.run_cmd(['ant'])
 
-  def build(self, mode='debug'):
+  def build(self, mode='debug', debug=True):
     """
     Builds the app project after the execution of validate and prepare.
 
@@ -74,7 +74,7 @@ class AntBuild(BaseBuild):
 
     Needs to be implemented by the subclass.
     """
-    self.run_cmd(['ant', mode])
+    self.run_cmd(['ant', mode], debug=debug)
 
   def test(self):
     """

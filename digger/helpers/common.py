@@ -2,7 +2,6 @@ import fnmatch
 import os
 import subprocess
 import sys
-import os
 
 
 class ProcOutput(object):
@@ -20,21 +19,23 @@ class ProcOutput(object):
     return self.lines
 
 
-def run_cmd(cmd, cwd='.', bufsize=1):
+def run_cmd(cmd, cwd='.', bufsize=1, **kwargs):
   """
   Runs a command in the backround by creating a new process and writes the output to a specified log file.
 
-  :param log(str) - log filename to be used
   :param cwd(str) - basedir to write/create the log file
-  :param stdout(pipe) - stdout process pipe (can be default stdout, a file, etc)
-  :param bufsize(int) - set the output buffering, default is 1 (per line)
+  :param bufsize(int) - set the output buffering, default is 1
   """
-
-  stdout = ProcOutput()
-
+  debug = kwargs.get('debug', True)
+  if debug is True:
+    stdout = kwargs.get('stdout', ProcOutput())
+  else:
+    stdout = open('/dev/null', 'w+')
+  stderr = kwargs.get('stderr', stderr)
   proc_args = {
     'stdout': stdout,
-    'stderr': sys.stderr,
+    'stderr': stderr,
+    'buffsize': buffsize,
     'cwd': cwd,
     'universal_newlines': True
   }
