@@ -9,7 +9,7 @@ from digger.helpers import android as android_helper
 
 
 class GradleBuild(BaseBuild):
-  def __init__(self, cache_folder='/gradle-cache', **kwargs):
+  def __init__(self, cache_folder=None, **kwargs):
     super(GradleBuild, self).__init__(**kwargs)
     self.cache_folder = cache_folder
     self.src_folder = None
@@ -93,8 +93,6 @@ class GradleBuild(BaseBuild):
     if os.path.exists('%s/gradlew' % self.path) is False:
       raise errors.InvalidProjectStructure(message='Missing gradlew project root folder')
 
-    self.touch_log('validate')
-
   def prepare(self):
     """
     Prepares the android project to the build process.
@@ -120,11 +118,11 @@ class GradleBuild(BaseBuild):
     }
     cmd = [
       './gradlew',
-      ref.get(mode, mode),
-      '--gradle-user-home',
-      self.cache_folder 
+      ref.get(mode, mode) 
     ]
-    self.run_cmd(cmd, 'build')
+    if self.cache_folder is not None:
+      cmd.extend(['--gradle-user-home', self.cache_folder])
+    self.run_cmd(cmd)
 
   def test(self):
     """
@@ -132,7 +130,7 @@ class GradleBuild(BaseBuild):
 
     Needs to be implemented by the subclass.
     """
-    self.run_cmd(['./gradlew', 'test'], 'test')
+    self.run_cmd(['./gradlew', 'test'])
 
   def get_export_path(self):
     """

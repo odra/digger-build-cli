@@ -2,36 +2,25 @@ import fnmatch
 import os
 import subprocess
 import sys
-import io
 import os
-from contextlib import redirect_stdout
-import copy
-import pty
 
 
-class Out(object):
+class ProcOutput(object):
   def __init__(self, stdout=sys.stdout, fno=-1):
     self.fno = fno
     self.stdout = stdout
-    self.lines = []
-    self.lines.append('oi')
 
   def fileno(self):
     return self.fno
 
   def write(self, string):
-    self.lines.append('write')
-    print('lalalal')
     self.stdout.write(string)
 
   def readlines(self):
     return self.lines
 
-  def read(self):
-    return '\n'.join(self.lines)
 
-
-def run_cmd(cmd, log='log.log', cwd='.', stdout=sys.stdout, bufsize=1, encode='utf-8'):
+def run_cmd(cmd, cwd='.', bufsize=1):
   """
   Runs a command in the backround by creating a new process and writes the output to a specified log file.
 
@@ -39,48 +28,19 @@ def run_cmd(cmd, log='log.log', cwd='.', stdout=sys.stdout, bufsize=1, encode='u
   :param cwd(str) - basedir to write/create the log file
   :param stdout(pipe) - stdout process pipe (can be default stdout, a file, etc)
   :param bufsize(int) - set the output buffering, default is 1 (per line)
-  :param encode(str) - string encoding to decode the logged content, default is utf-8
-
-  Returns:
-    The process object
   """
-  '''
-  logfile = '%s/%s' % (cwd, log)
-  
-  if os.path.exists(logfile):
-    os.remove(logfile)
-  '''
 
-  out = Out()
+  stdout = ProcOutput()
 
   proc_args = {
-    'stdout': out,
-    'stderr': subprocess.PIPE,
+    'stdout': stdout,
+    'stderr': sys.stderr,
     'cwd': cwd,
     'universal_newlines': True
   }
 
   with subprocess.Popen(cmd, **proc_args) as proc:
-    print(out.readlines())
-
-  '''
-  proc = subprocess.Popen(cmd, **proc_args)
-  
-  while True:
-    line = proc.stdout.readline()
-    if proc.poll() is None:
-      stdout.write(line)
-    else:
-      break
-  '''
-  '''
-  out, err = proc.communicate()
-  with open(logfile, 'w') as f:
-    if out:
-      f.write(out)
-    else:
-      f.write(err)
-  '''
+    pass
 
 
 def find(root_dir, pattern='*'):
@@ -89,14 +49,3 @@ def find(root_dir, pattern='*'):
     for filename in fnmatch.filter(filenames, pattern):
       matches.append(os.path.join(root, filename))
   return matches
-
-
-def touch_log(log, cwd='.'):
-  """
-  Touches the log file. Creates if not exists OR updates the modification date if exists.
-  :param log:
-  :return: nothing
-  """
-  logfile = '%s/%s' % (cwd, log)
-  with open(logfile, 'a'):
-    os.utime(logfile, None)

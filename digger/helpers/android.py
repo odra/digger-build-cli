@@ -28,7 +28,7 @@ def jarsign(storepass, keypass, keystore, source, alias, path=None):
     source,
     alias
   ]
-  common.run_cmd(cmd, log='jarsign.log', cwd=path)
+  common.run_cmd(cmd, cwd=path)
 
 
 def zipalign(source, dist, build_tool=None, version='4', path=None):
@@ -57,7 +57,7 @@ def zipalign(source, dist, build_tool=None, version='4', path=None):
     source,
     dist,
   ]
-  common.run_cmd(cmd, log='zipalign.log', cwd=path)
+  common.run_cmd(cmd, cwd=path)
 
 
 def get_default_keystore(prefix='AG_'):

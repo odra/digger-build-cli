@@ -54,7 +54,7 @@ class AntBuild(BaseBuild):
       '-p', self.path,
       '-t', self.get_target()
     ]
-    self.run_cmd(cmd, 'prepare')
+    self.run_cmd(cmd)
 
   def validate(self):
     """
@@ -64,7 +64,7 @@ class AntBuild(BaseBuild):
 
     Needs to be implemented by the subclass.
     """
-    self.run_cmd(['ant'], 'validate')
+    self.run_cmd(['ant'])
 
   def build(self, mode='debug'):
     """
@@ -74,7 +74,7 @@ class AntBuild(BaseBuild):
 
     Needs to be implemented by the subclass.
     """
-    self.run_cmd(['ant', mode], 'build')
+    self.run_cmd(['ant', mode])
 
   def test(self):
     """
@@ -82,7 +82,7 @@ class AntBuild(BaseBuild):
 
     Needs to be implemented by the subclass.
     """
-    self.run_cmd(['ant', 'test'], 'test')
+    self.run_cmd(['ant', 'test'])
 
   def get_export_path(self):
     """

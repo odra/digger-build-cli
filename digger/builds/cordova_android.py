@@ -7,14 +7,10 @@ from digger.helpers import android as android_helper
 
 
 class CordovaAndroidBuild(BaseBuild):
-  def __init__(self, **kwargs):
-    super(CordovaAndroidBuild, self).__init__(**kwargs)
-
   def sign(self, storepass=None, keypass=None, keystore=None, apk=None, alias=None, name='app'):
     if keystore is None:
       (keystore, storepass, keypass, alias) = android_helper.get_default_keystore()
     dist = '%s/%s.apk' % ('/'.join(apk.split('/')[:-1]), name)
-
     android_helper.jarsign(storepass, keypass, keystore, apk, alias, path=self.path)
     android_helper.zipalign(apk, dist, build_tool=config.build_tool_version, path=self.path)
 
@@ -24,7 +20,7 @@ class CordovaAndroidBuild(BaseBuild):
 
     # if Android platform is not there, add it.
     if os.path.exists('%s/platforms/android' % self.path) is False:
-      self.run_cmd(['cordova', 'platform', 'add', 'android'], 'prepare')
+      self.run_cmd(['cordova', 'platform', 'add', 'android'])
 
     # if we have a package.json file, do npm run.
     # however, since things in node_modules are platform dependent,
@@ -32,24 +28,28 @@ class CordovaAndroidBuild(BaseBuild):
     if os.path.exists('%s/package.json' % self.path):
       if os.path.exists('%s/node_modules' % self.path):
         shutil.rmtree('%s/node_modules' % self.path)
-      self.run_cmd(['npm', 'install'], 'prepare')
+      self.run_cmd(['npm', 'install'])
 
   def validate(self):
     # nothing to validate here.
-    # just touch the log file
-    self.touch_log('validate')
+    pass
 
   def build(self, mode='debug'):
     # run something like
     # cordova build android --debug
     # OR
     # cordova build android --release
-    self.run_cmd(['cordova', 'build', "android", "--%s" % mode], 'build')
+    cmd = [
+      'cordova',
+      'build',
+      'android',
+      '--%s' % mode
+    ]
+    self.run_cmd(cmd)
 
   def test(self):
     # nothing to test here.
-    # just touch the log file
-    self.touch_log('test')
+    pass
 
   def get_export_path(self):
     """

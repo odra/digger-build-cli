@@ -1,7 +1,7 @@
 from digger import builds
 from .base.action import BaseAction, Argument
 
-__ALL__ = ['BuildAction', 'ExportAction', 'InspectAction', 'LogAction']
+__ALL__ = ['BuildAction', 'ExportAction', 'InspectAction']
 
 
 class BuildAction(BaseAction):
@@ -14,8 +14,9 @@ class BuildAction(BaseAction):
 
   path = Argument('--path', '-p', default='/app', action='store', help='app source path')
   mode = Argument('--mode', '-m', default='debug', action='store', help='build mode: debug(default) or release')
+  debug = Argument('--debug', '-d', default=True, action='store', help='debug/verbose mode, prints full output to stdout')
 
-  def handler(self, path='/app', mode='debug'):
+  def handler(self, path='/app', mode='debug', debug=True):
     """
     Handler that executes the application build based on its platform (using the ``project`` package).
 
@@ -29,9 +30,9 @@ class BuildAction(BaseAction):
       'path': path
     }
     project = builds.from_path(path)
-    project.prepare()
-    project.validate()
-    project.build(mode=mode)
+    project.prepare(debug=debug)
+    project.validate(debug=debug)
+    project.build(mode=mode, debug=debug)
 
 
 class ExportAction(BaseAction):
@@ -81,34 +82,7 @@ class InspectAction(BaseAction):
       'path': path
     }
     project = builds.from_path(path)
-    print(project.inspect())
-
-
-class LogAction(BaseAction):
-  """
-  Log action that inherits from BaseAction to retrieve the build logs in the STDOUT.
-  """
-  _cmd_ = 'log'
-  _help_ = 'read build log'
-
-  path = Argument('--path', '-p', default='/app', action='store', help='app source path')
-  ctx = Argument('--ctx', '-c', default='all', action='store', help='log context')
-
-  def handler(self, path='/app', ctx='all'):
-    """
-    Handler that prints the project build log into the STDOUT (using the ``project`` package).
-
-    :param path(str): the project source code path, default is '/app'.
-    :param ctx(str): build log context file to be used, available options: validate, prepare, build or all.
-
-    Returns:
-      Doesn't return a value but prints the output in the STDOUT/STDERR (separated by a comma).
-    """
-    options = {
-      'path': path
-    }
-    project = builds.from_path(path)
-    project.log(ctx=ctx)
+    project.inspect()
 
 
 class TestAction(BaseAction):
