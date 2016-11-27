@@ -115,7 +115,7 @@ class BaseBuild(with_metaclass(abc.ABCMeta, object)):
       [output.append('|{}{}'.format(subindent, f)) for f in files]
     self.run_cmd(['echo', '\n'.join(output)])
 
-  def run_cmd(self, cwd=None, **kwargs):
+  def run_cmd(self, cmd, cwd=None, **kwargs):
     if cwd is None:
       cwd = self.path
     common.run_cmd(cmd, cwd=cwd, **kwargs)

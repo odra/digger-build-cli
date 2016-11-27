@@ -31,11 +31,11 @@ def run_cmd(cmd, cwd='.', bufsize=1, **kwargs):
     stdout = kwargs.get('stdout', ProcOutput())
   else:
     stdout = open('/dev/null', 'w+')
-  stderr = kwargs.get('stderr', stderr)
+  stderr = kwargs.get('stderr', ProcOutput(stdout=sys.stderr))
   proc_args = {
     'stdout': stdout,
     'stderr': stderr,
-    'buffsize': buffsize,
+    'bufsize': bufsize,
     'cwd': cwd,
     'universal_newlines': True
   }

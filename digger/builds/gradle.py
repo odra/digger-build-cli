@@ -18,7 +18,7 @@ class GradleBuild(BaseBuild):
     """
     Creates a gradle cache folder if it does not exist.
     """
-    if os.path.exists(self.cache_folder) is False:
+    if self.cache_folder and os.path.exists(self.cache_folder) is False:
       os.makedirs(self.cache_folder)
 
   def is_app_folder(self, folder):

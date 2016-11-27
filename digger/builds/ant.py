@@ -56,7 +56,7 @@ class AntBuild(BaseBuild):
     ]
     self.run_cmd(cmd, debug=debug)
 
-  def validate(self, debug=debug):
+  def validate(self, debug=True):
     """
     Validates the app project before the build.
 
